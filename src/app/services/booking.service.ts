@@ -1,10 +1,102 @@
 import { Injectable } from "@angular/core"
+import { DataService } from './data.service'
 import type { Booking } from "../models/booking"
+import type { MockBooking, MockClosure } from '../models/booking-types'
 
 @Injectable({
   providedIn: "root",
 })
 export class BookingService {
+  constructor(private dataService: DataService) {}
+
+  // Helper para parsear horas y minutos de un string "HH:MM"
+  parseTime(timeString: string): { hours: number; minutes: number } {
+    const [hours, minutes] = timeString.split(':').map(Number)
+    return { hours, minutes }
+  }
+
+  // Helper para obtener un objeto Date con la fecha y hora específicas
+  getDateTime(date: Date, timeString: string): Date {
+    const { hours, minutes } = this.parseTime(timeString)
+    const dt = new Date(date)
+    dt.setHours(hours, minutes, 0, 0)
+    return dt
+  }
+
+  // Helper para comprobar si dos intervalos de tiempo se solapan
+  intervalsOverlap(intervalA: [Date, Date], intervalB: [Date, Date]): boolean {
+    const [startA, endA] = intervalA
+    const [startB, endB] = intervalB
+    return startA < endB && startB < endA
+  }
+
+  // Función para determinar si un slot está disponible
+  isSlotAvailable(date: Date, timeString: string, professionalId: number, serviceDuration: number): boolean {
+    const proposedStart = this.getDateTime(date, timeString)
+    const proposedEnd = new Date(proposedStart.getTime() + serviceDuration * 60 * 1000)
+
+    const mockBookings = this.dataService.getMockBookings()
+
+    // Comprobar solapamiento con mockBookings para el profesional o "Cualquiera"
+    const isBooked = mockBookings.some(booking => {
+      const bookingDate = this.getDateTime(new Date(booking.date), booking.startTime)
+      if (bookingDate.toDateString() !== proposedStart.toDateString()) return false
+
+      const bookingStart = this.getDateTime(new Date(booking.date), booking.startTime)
+      const bookingEnd = this.getDateTime(new Date(booking.date), booking.endTime)
+      const bookingInterval: [Date, Date] = [bookingStart, bookingEnd]
+
+      // Comprueba si el ID del profesional coincide o si es "Cualquiera" (ID 1)
+      const isForThisProfessional = (professionalId === booking.professionalId) || (professionalId === 1)
+      
+      return isForThisProfessional && this.intervalsOverlap([proposedStart, proposedEnd], bookingInterval)
+    })
+
+    return !isBooked
+  }
+
+  // Comprobar si el día está cerrado
+  isClosedDay(date: Date, professionalId: number): boolean {
+    const mockClosures = this.dataService.getMockClosures()
+    
+    return mockClosures.some(closure => {
+      const closureDate = this.getDateTime(new Date(closure.date), "00:00")
+      const isForThisProf = !closure.professionalId || closure.professionalId === professionalId
+      return isForThisProf && closureDate.toDateString() === date.toDateString()
+    })
+  }
+
+  // Verificar si es hora pasada del día actual
+  isPastTimeToday(date: Date, timeString: string): boolean {
+    const today = new Date()
+    const slotHour = this.parseTime(timeString).hours
+    const slotMinute = this.parseTime(timeString).minutes
+    
+    return date.toDateString() === today.toDateString() && 
+           (slotHour < today.getHours() || (slotHour === today.getHours() && slotMinute <= today.getMinutes()))
+  }
+
+  // Obtener días del mes
+  getDaysInMonth(month: number, year: number): Date[] {
+    const date = new Date(year, month, 1)
+    const days: Date[] = []
+    while (date.getMonth() === month) {
+      days.push(new Date(date))
+      date.setDate(date.getDate() + 1)
+    }
+    return days
+  }
+
+  // Obtener horarios disponibles para una fecha específica
+  getAvailableTimesForDate(date: Date, professionalId: number, serviceDuration: number): string[] {
+    const availableTimes = this.dataService.getAvailableTimes()
+    
+    return availableTimes.filter(time => {
+      const isPast = this.isPastTimeToday(date, time)
+      const isAvailable = this.isSlotAvailable(date, time, professionalId, serviceDuration)
+      return !isPast && isAvailable
+    })
+  }
   private bookings: Booking[] = [
     {
       id: 1,

@@ -48,6 +48,64 @@
   color: #d1d5db;
 }
 
+/* Dark Theme for Client Booking */
+[data-bs-theme="dark"] .client-booking-container {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+}
+
+[data-bs-theme="dark"] .booking-header {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+[data-bs-theme="dark"] .card {
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid #334155;
+}
+
+[data-bs-theme="dark"] .category-btn {
+  background: #1e293b;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+
+[data-bs-theme="dark"] .category-btn:hover {
+  border-color: #3b82f6;
+  background: #1e293b;
+}
+
+[data-bs-theme="dark"] .category-btn.active {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+}
+
+[data-bs-theme="dark"] .service-card {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+[data-bs-theme="dark"] .service-card:hover {
+  border-color: #3b82f6;
+  background: #1e293b;
+}
+
+[data-bs-theme="dark"] .service-card.selected {
+  background: linear-gradient(135deg, #1e293b, #334155);
+  border-color: #3b82f6;
+}
+
+[data-bs-theme="dark"] .service-name {
+  color: #e2e8f0;
+}
+
+[data-bs-theme="dark"] .step-label {
+  color: #94a3b8;
+}
+
+[data-bs-theme="dark"] .step-item.active .step-label,
+[data-bs-theme="dark"] .step-item.completed .step-label {
+  color: #e2e8f0;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .sidebar {

@@ -49,7 +49,7 @@
   border: none;
   background: transparent;
   padding: 8px;
-  border-radius: 50%;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
   color: #6b7280;
@@ -62,6 +62,38 @@
 .calendar-day.selected {
   background-color: #3b82f6;
   color: white;
+}
+
+/* Date & Time Selection Styles */
+.selected-service-summary {
+  margin-bottom: 1.5rem;
+}
+
+.service-icon-mini {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.calendar-section {
+  margin-bottom: 2rem;
+}
+
+.calendar-day.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  background-color: #f3f4f6;
+}
+
+.calendar-day.disabled:hover {
+  background-color: #f3f4f6;
+  transform: none;
 }
 
 /* Time Grid */
@@ -90,6 +122,49 @@
   background-color: #3b82f6;
   border-color: #3b82f6;
   color: white;
+}
+
+/* Professional Selection */
+.professional-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.professional-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.professional-card:hover {
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.professional-card.selected {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.professional-avatar {
+  font-size: 2rem;
+  color: #6b7280;
+}
+
+.professional-name {
+  margin: 0;
+  font-weight: 600;
+  color: #1f2937;
 }
 
 /* Booking Details */
@@ -272,4 +347,603 @@
 
 .client-detail {
   margin-bottom: 16px;
+}
+
+/* Modern Client Booking Styles */
+.client-booking-container {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  position: relative;
+}
+
+.booking-header {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 3rem 0;
+  color: white;
+}
+
+.booking-header .display-5 {
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.booking-header .lead {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Progress Steps */
+.progress-steps {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.step-progress-bar {
+  position: relative;
+  height: 4px;
+  background-color: #e5e7eb;
+  border-radius: 2px;
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.progress-line {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  border-radius: 2px;
+  transition: width 0.5s ease-in-out;
+  position: relative;
+}
+
+.progress-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.steps-container {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.step-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #e5e7eb;
+  border: 3px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #6b7280;
+  transition: all 0.3s ease;
+  margin-bottom: 0.5rem;
+}
+
+.step-item.active .step-circle {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.step-item.completed .step-circle {
+  background-color: #10b981;
+  border-color: #10b981;
+  color: white;
+}
+
+.step-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-align: center;
+  transition: color 0.3s ease;
+}
+
+.step-item.active .step-label,
+.step-item.completed .step-label {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+/* Step Content */
+.step-content {
+  animation: slideInUp 0.5s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Service Categories */
+.service-categories {
+  margin-bottom: 2rem;
+}
+
+.category-btn {
+  padding: 1rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #e5e7eb;
+  background: white;
+}
+
+.category-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-color: #3b82f6;
+}
+
+.category-btn.active {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border-color: #3b82f6;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+}
+
+/* Services Grid */
+.services-grid {
+  margin-bottom: 2rem;
+}
+
+.service-card {
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 1.5rem;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.service-card:hover::before {
+  left: 100%;
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+  border-color: #3b82f6;
+}
+
+.service-card.selected {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(59, 130, 246, 0.2);
+}
+
+.service-card-body {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.service-icon-wrapper {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.service-icon {
+  font-size: 1.5rem;
+  color: white;
+}
+
+.service-details {
+  flex: 1;
+}
+
+.service-name {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #1f2937;
+  font-size: 1.1rem;
+}
+
+.service-duration {
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+}
+
+.service-price {
+  font-size: 1.25rem;
+  color: #3b82f6;
+}
+
+/* Card Enhancements */
+.card {
+  border: none;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.card-body {
+  position: relative;
+}
+
+/* Button Enhancements */
+.btn-primary {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+}
+
+.btn-primary:disabled {
+  background: #9ca3af;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-primary:disabled::before {
+  display: none;
+}
+
+/* Success Animation */
+.success-animation {
+  animation: bounceIn 0.6s ease-out;
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Form Enhancements */
+.form-control {
+  border-radius: 8px;
+  border: 2px solid #e5e7eb;
+  padding: 0.75rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+  outline: none;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.form-check-input:checked {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.form-check-label {
+  color: #374151;
+}
+
+/* New Step Progress Styles */
+.step-progress {
+  display: flex;
+  align-items: center;
+  margin: 0 1rem;
+}
+
+.step-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.875rem;
+  background-color: #e5e7eb;
+  color: #6b7280;
+  transition: all 0.3s ease;
+}
+
+.step-circle.active {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.step-circle.completed {
+  background-color: #10b981;
+  color: white;
+}
+
+.step-label {
+  font-weight: 500;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.step-connector {
+  width: 4rem;
+  height: 2px;
+  background-color: #e5e7eb;
+  margin: 0 1rem;
+}
+
+/* Service Card Enhancements */
+.service-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.service-card.border-primary {
+  border-color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+.service-icon-wrapper .bg-primary {
+  background-color: rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Calendar Styles */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  text-align: center;
+}
+
+.calendar-header {
+  font-weight: 600;
+  color: #6b7280;
+  padding: 8px;
+  font-size: 0.875rem;
+}
+
+.calendar-day {
+  border: none;
+  background: transparent;
+  padding: 8px;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-day:hover:not(.disabled) {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+
+.calendar-day.selected {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.calendar-day.today {
+  border: 2px solid #3b82f6;
+  color: #3b82f6;
+}
+
+.calendar-day.today.selected {
+  border-color: #1d4ed8;
+}
+
+.calendar-day.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  color: #9ca3af;
+}
+
+/* Time Slots */
+.time-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.time-slot {
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.time-slot:hover {
+  transform: translateY(-2px);
+}
+
+/* Summary Items */
+.summary-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.summary-label {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.summary-value {
+  font-weight: 500;
+  color: #374151;
+  text-align: right;
+}
+
+/* Fade In Animation */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Professional Cards */
+.professional-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.professional-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .step-progress {
+    margin: 0 0.5rem;
+  }
+  
+  .step-label {
+    display: none;
+  }
+  
+  .step-connector {
+    width: 2rem;
+    margin: 0 0.5rem;
+  }
+  
+  .time-slots-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .calendar-day {
+    min-height: 35px;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .step-progress {
+    margin: 0 0.25rem;
+  }
+  
+  .step-connector {
+    width: 1rem;
+  }
+  
+  .time-slots-grid {
+    grid-template-columns: 1fr;
+  }
 }

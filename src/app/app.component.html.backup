@@ -1,0 +1,666 @@
+<div [attr.data-bs-theme]="themeService.isDarkMode ? 'dark' : 'light'" class="min-vh-100">
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom sticky-top" 
+       [class.navbar-dark]="themeService.isDarkMode" 
+       [class.bg-dark]="themeService.isDarkMode">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold text-primary" href="#">SerenaCita</a>
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-outline-secondary" (click)="themeService.toggleTheme()">
+          <i [class]="themeService.isDarkMode ? 'bi bi-sun' : 'bi bi-moon'"></i>
+        </button>
+        <div class="btn-group">
+          <button class="btn" 
+                  [class.btn-primary]="currentView === 'client'" 
+                  [class.btn-outline-primary]="currentView !== 'client'" 
+                  (click)="switchView('client')">
+            Vista Cliente
+          </button>
+          <button class="btn" 
+                  [class.btn-primary]="currentView === 'admin'" 
+                  [class.btn-outline-primary]="currentView !== 'admin'" 
+                  (click)="switchView('admin')">
+            Vista Admin
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Client View -->
+  <div *ngIf="currentView === 'client'" class="client-booking-container">
+    <!-- Header -->
+    <div class="booking-header">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 text-center">
+            <h1 class="display-5 fw-bold mb-2">Reserva tu Cita</h1>
+            <p class="lead text-muted">Encuentra el mejor momento para tu cuidado personal</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Booking Content -->
+    <div class="container py-4">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          
+          <!-- Progress Steps -->
+          <div class="progress-steps mb-5">
+            <div class="step-progress-bar">
+              <div class="progress-line" [style.width.%]="(clientStep / 4) * 100"></div>
+            </div>
+            <div class="steps-container">
+              <div class="step-item" 
+                   [class.active]="clientStep >= 1" 
+                   [class.completed]="clientStep > 1">
+                <div class="step-circle">
+                  <i class="bi bi-list-ul" *ngIf="clientStep > 1"></i>
+                  <span *ngIf="clientStep <= 1">1</span>
+                </div>
+                <span class="step-label">Servicio</span>
+              </div>
+              
+              <div class="step-item" 
+                   [class.active]="clientStep >= 2" 
+                   [class.completed]="clientStep > 2">
+                <div class="step-circle">
+                  <i class="bi bi-calendar-check" *ngIf="clientStep > 2"></i>
+                  <span *ngIf="clientStep <= 2">2</span>
+                </div>
+                <span class="step-label">Fecha & Hora</span>
+              </div>
+              
+              <div class="step-item" 
+                   [class.active]="clientStep >= 3" 
+                   [class.completed]="clientStep > 3">
+                <div class="step-circle">
+                  <i class="bi bi-person-fill" *ngIf="clientStep > 3"></i>
+                  <span *ngIf="clientStep <= 3">3</span>
+                </div>
+                <span class="step-label">Datos</span>
+              </div>
+              
+              <div class="step-item" 
+                   [class.active]="clientStep >= 4">
+                <div class="step-circle">
+                  <i class="bi bi-check-lg"></i>
+                </div>
+                <span class="step-label">Confirmación</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 1: Service Selection -->
+          <div *ngIf="clientStep === 1" class="step-content fade-in">
+            <div class="card shadow-sm border-0">
+              <div class="card-body p-4">
+                <h3 class="card-title text-center mb-4">Selecciona tu Servicio</h3>
+                
+                <!-- Service Categories -->
+                <div class="service-categories mb-4">
+                  <div class="row g-3">
+                    <div class="col-6 col-md-3" *ngFor="let category of getServiceCategories()">
+                      <button class="btn btn-outline-primary w-100 category-btn"
+                              [class.active]="selectedCategory === category"
+                              (click)="selectedCategory = category">
+                        <i class="bi bi-{{ getCategoryIcon(category) }} fs-4 d-block mb-2"></i>
+                        <small class="fw-medium">{{ category }}</small>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Services Grid -->
+                <div class="services-grid">
+                  <div class="row g-4">
+                    <div class="col-md-6" *ngFor="let service of getFilteredServices()">
+                      <div class="service-card h-100" 
+                           [class.selected]="selectedService?.id === service.id"
+                           (click)="selectService(service)">
+                        <div class="service-card-body">
+                          <div class="service-icon-wrapper">
+                            <i class="bi bi-{{ service.icon }} service-icon"></i>
+                          </div>
+                          <div class="service-details">
+                            <h5 class="service-name">{{ service.name }}</h5>
+                            <p class="service-duration text-muted mb-2">
+                              <i class="bi bi-clock me-1"></i>{{ service.duration }} min
+                            </p>
+                            <p class="service-price fw-bold text-primary mb-0">
+                              ${{ service.price }}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Continue Button -->
+                <div class="text-center mt-4">
+                  <button class="btn btn-primary btn-lg px-5" 
+                          [disabled]="!selectedService"
+                          (click)="nextStep()">
+                    Continuar
+                    <i class="bi bi-arrow-right ms-2"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Back Button -->
+        <button *ngIf="clientStep > 1 && clientStep < 4" 
+                class="btn btn-link text-muted mb-3" 
+                (click)="goBackStep()">
+          <i class="bi bi-chevron-left"></i> Volver
+        </button>
+
+        <!-- Step 1: Service Selection -->
+        <div *ngIf="clientStep === 1" class="fade-in">
+          <h2 class="text-center mb-2">Elige un Servicio</h2>
+          <p class="text-center text-muted mb-5">Comienza seleccionando el servicio que deseas agendar.</p>
+          <div class="row g-3">
+            <div *ngFor="let service of dataService.services" class="col-md-6">
+              <div class="card h-100 shadow-sm service-card" (click)="selectService(service)">
+                <div class="card-body d-flex align-items-center">
+                  <div class="service-icon">
+                    <i class="bi bi-scissors text-primary fs-4"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="card-title mb-1">{{service.name}}</h6>
+                    <p class="card-text text-muted small">{{service.duration}} min - ${{service.price}}</p>
+                  </div>
+                  <i class="bi bi-arrow-right text-muted"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Date & Time Selection -->
+        <div *ngIf="clientStep === 2" class="step-content fade-in">
+          <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+              <div class="row">
+                <div class="col-md-8">
+                  <h3 class="card-title mb-4">Selecciona Fecha y Hora</h3>
+                  
+                  <!-- Selected Service Summary -->
+                  <div class="selected-service-summary mb-4">
+                    <div class="d-flex align-items-center gap-3 p-3 bg-light rounded-3">
+                      <div class="service-icon-mini">
+                        <i class="bi bi-{{ selectedService?.icon }}"></i>
+                      </div>
+                      <div>
+                        <h6 class="mb-1">{{ selectedService?.name }}</h6>
+                        <small class="text-muted">
+                          <i class="bi bi-clock me-1"></i>{{ selectedService?.duration }} min
+                          <i class="bi bi-currency-dollar ms-3 me-1"></i>{{ selectedService?.price }}
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Calendar -->
+                  <div class="calendar-section mb-4">
+                    <h5 class="mb-3">Fecha</h5>
+                    <div class="calendar-grid">
+                      <div *ngFor="let day of ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']" 
+                           class="calendar-header">
+                        {{ day }}
+                      </div>
+                      <div *ngFor="let day of calendarDays" 
+                           class="calendar-day"
+                           [class.selected]="selectedDate === day"
+                           [class.disabled]="isDateDisabled(day)"
+                           (click)="selectDate(day)">
+                        {{ day }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Available Times -->
+                  <div *ngIf="selectedDate" class="time-section">
+                    <h5 class="mb-3">Hora Disponible</h5>
+                    <div class="time-grid">
+                      <button *ngFor="let time of getAvailableTimesForDate()" 
+                              class="time-slot"
+                              [class.selected]="selectedTime === time"
+                              (click)="selectTime(time)">
+                        {{ time }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Professional Selection -->
+                <div class="col-md-4">
+                  <h5 class="mb-3">Profesional</h5>
+                  <div class="professional-selection">
+                    <div *ngFor="let professional of getAvailableProfessionals()" 
+                         class="professional-card"
+                         [class.selected]="selectedProfessional?.id === professional.id"
+                         (click)="selectProfessional(professional)">
+                      <div class="professional-avatar">
+                        <i class="bi bi-person-circle"></i>
+                      </div>
+                      <div class="professional-info">
+                        <h6 class="professional-name">{{ professional.name }}</h6>
+                        <small class="text-muted">Especialista</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Navigation Buttons -->
+              <div class="d-flex justify-content-between mt-4">
+                <button class="btn btn-outline-secondary px-4" (click)="previousStep()">
+                  <i class="bi bi-arrow-left me-2"></i>Anterior
+                </button>
+                <button class="btn btn-primary px-4" 
+                        [disabled]="!selectedDate || !selectedTime || !selectedProfessional"
+                        (click)="nextStep()">
+                  Continuar
+                  <i class="bi bi-arrow-right ms-2"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Client Information -->
+        <div *ngIf="clientStep === 3" class="step-content fade-in">
+          <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+              <h3 class="card-title text-center mb-4">Tus Datos</h3>
+              
+              <!-- Client Form -->
+              <div class="row justify-content-center">
+                <div class="col-md-8">
+                  <form>
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <label for="firstName" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="firstName" 
+                               [(ngModel)]="clientInfo.firstName" name="firstName"
+                               placeholder="Tu nombre">
+                      </div>
+                      <div class="col-md-6">
+                        <label for="lastName" class="form-label">Apellido</label>
+                        <input type="text" class="form-control" id="lastName" 
+                               [(ngModel)]="clientInfo.lastName" name="lastName"
+                               placeholder="Tu apellido">
+                      </div>
+                      <div class="col-12">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" 
+                               [(ngModel)]="clientInfo.email" name="email"
+                               placeholder="tu@email.com">
+                      </div>
+                      <div class="col-12">
+                        <label for="phone" class="form-label">Teléfono</label>
+                        <input type="tel" class="form-control" id="phone" 
+                               [(ngModel)]="clientInfo.phone" name="phone"
+                               placeholder="+1 234 567 8900">
+                      </div>
+                      <div class="col-12">
+                        <label for="notes" class="form-label">Notas adicionales (opcional)</label>
+                        <textarea class="form-control" id="notes" rows="3"
+                                  [(ngModel)]="clientInfo.notes" name="notes"
+                                  placeholder="Alguna preferencia especial..."></textarea>
+                      </div>
+                      
+                      <!-- Calm Mode Toggle -->
+                      <div class="col-12">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="calmMode" 
+                                 [(ngModel)]="clientInfo.calmMode" name="calmMode">
+                          <label class="form-check-label" for="calmMode">
+                            <strong>Modo Calma</strong> - Prefiero un ambiente tranquilo sin conversación
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Navigation Buttons -->
+              <div class="d-flex justify-content-between mt-4">
+                <button class="btn btn-outline-secondary px-4" (click)="previousStep()">
+                  <i class="bi bi-arrow-left me-2"></i>Anterior
+                </button>
+                <button class="btn btn-primary px-4" 
+                        [disabled]="!isClientInfoValid()"
+                        (click)="nextStep()">
+                  Confirmar Reserva
+                  <i class="bi bi-check-lg ms-2"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Confirmation -->
+        <div *ngIf="clientStep === 4" class="step-content fade-in">
+          <div class="card shadow-sm border-0 text-center">
+            <div class="card-body p-5">
+              <div class="success-animation mb-4">
+                <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+              </div>
+              
+              <h2 class="text-success mb-3">¡Reserva Confirmada!</h2>
+              <p class="lead text-muted mb-4">
+                Hemos enviado los detalles de tu cita a {{ clientInfo.email }}
+              </p>
+
+              <!-- Booking Summary -->
+              <div class="booking-summary mx-auto" style="max-width: 400px;">
+                <div class="summary-item">
+                  <div class="summary-label">
+                    <i class="bi bi-calendar3 me-2"></i>Fecha
+                  </div>
+                  <div class="summary-value">{{ formatSelectedDate() }}</div>
+                </div>
+                
+                <div class="summary-item">
+                  <div class="summary-label">
+                    <i class="bi bi-clock me-2"></i>Hora
+                  </div>
+                  <div class="summary-value">{{ selectedTime }}</div>
+                </div>
+                
+                <div class="summary-item">
+                  <div class="summary-label">
+                    <i class="bi bi-scissors me-2"></i>Servicio
+                  </div>
+                  <div class="summary-value">{{ selectedService?.name }}</div>
+                </div>
+                
+                <div class="summary-item">
+                  <div class="summary-label">
+                    <i class="bi bi-person me-2"></i>Profesional
+                  </div>
+                  <div class="summary-value">{{ selectedProfessional?.name }}</div>
+                </div>
+                
+                <div class="summary-item border-top pt-3">
+                  <div class="summary-label">
+                    <i class="bi bi-currency-dollar me-2"></i>Total
+                  </div>
+                  <div class="summary-value fw-bold text-primary fs-4">
+                    ${{ selectedService?.price }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="mt-4">
+                <button class="btn btn-primary me-3" (click)="addToCalendar()">
+                  <i class="bi bi-calendar-plus me-2"></i>Agregar al Calendario
+                </button>
+                <button class="btn btn-outline-primary" (click)="resetBooking()">
+                  <i class="bi bi-plus-lg me-2"></i>Nueva Reserva
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin View -->
+  <div *ngIf="currentView === 'admin'" class="d-flex">
+    <!-- Sidebar -->
+    <nav class="sidebar" 
+         [class.bg-dark]="themeService.isDarkMode" 
+         [class.sidebar-collapsed]="!sidebarOpen">
+      <div class="sidebar-header">
+        <h5 *ngIf="sidebarOpen" class="mb-0 text-primary">SerenaCita</h5>
+        <button class="btn btn-sm btn-outline-secondary" (click)="toggleSidebar()">
+          <i [class]="sidebarOpen ? 'bi bi-chevron-left' : 'bi bi-chevron-right'"></i>
+        </button>
+      </div>
+      
+      <ul class="sidebar-nav">
+        <li class="nav-item" *ngFor="let item of menuItems">
+          <a class="nav-link" 
+             [class.active]="adminPage === item.page"
+             (click)="setAdminPage(item.page)">
+            <i [class]="item.icon" class="nav-icon"></i>
+            <span *ngIf="sidebarOpen" class="nav-text">{{item.label}}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <!-- Dashboard -->
+      <div *ngIf="adminPage === 'dashboard'" class="fade-in">
+        <h1 class="mb-4">Panel de Control</h1>
+        
+        <!-- KPI Cards -->
+        <div class="row g-3 mb-4">
+          <div class="col-md-3" *ngFor="let kpi of kpiData">
+            <div class="card kpi-card">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <p class="text-muted small mb-1">{{kpi.title}}</p>
+                    <h3 class="mb-1">{{kpi.value}}</h3>
+                    <small [class.text-success]="kpi.changeType === 'positive'" 
+                           [class.text-danger]="kpi.changeType === 'negative'">
+                      <i [class]="kpi.changeType === 'positive' ? 'bi bi-arrow-up' : 'bi bi-arrow-down'"></i>
+                      {{Math.abs(kpi.change)}}% vs mes anterior
+                    </small>
+                  </div>
+                  <i [class]="kpi.icon" class="text-muted fs-4"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Revenue Chart -->
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">Rendimiento Financiero</h5>
+          </div>
+          <div class="card-body">
+            <div class="chart-placeholder">
+              <p class="text-muted text-center">Gráfico de ingresos y gastos</p>
+              <div class="d-flex justify-content-center gap-4">
+                <div class="d-flex align-items-center">
+                  <div class="legend-color bg-primary"></div>
+                  <span class="small">Ingresos</span>
+                </div>
+                <div class="d-flex align-items-center">
+                  <div class="legend-color bg-danger"></div>
+                  <span class="small">Gastos</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calendar -->
+      <div *ngIf="adminPage === 'agenda'" class="fade-in">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h1>Agenda Semanal</h1>
+          <button class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>Nueva Cita
+          </button>
+        </div>
+        
+        <div class="card">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered calendar-table">
+                <thead>
+                  <tr>
+                    <th class="time-column">Hora</th>
+                    <th *ngFor="let day of weekDays">{{day}}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let hour of workingHours">
+                    <td class="time-cell">{{hour}}</td>
+                    <td *ngFor="let day of weekDays" 
+                        class="appointment-cell" 
+                        (click)="addAppointment(day, hour)">
+                      <!-- Appointments would be rendered here -->
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clients -->
+      <div *ngIf="adminPage === 'clientes'" class="fade-in">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h1>Clientes</h1>
+          <button class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>Nuevo Cliente
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Contacto</th>
+                    <th>Última Visita</th>
+                    <th class="text-center">Modo Calma</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let client of dataService.clients" class="client-row">
+                    <td>{{client.name}}</td>
+                    <td>{{client.email}}</td>
+                    <td>{{client.lastVisit}}</td>
+                    <td class="text-center">
+                      <span *ngIf="client.calmaMode" 
+                            class="badge bg-primary rounded-pill calm-mode-badge" 
+                            [title]="client.preferences || 'Interacción mínima preferida'">
+                        <i class="bi bi-sun"></i>
+                      </span>
+                      <span *ngIf="!client.calmaMode" class="badge bg-secondary rounded-pill">
+                        <i class="bi bi-moon"></i>
+                      </span>
+                    </td>
+                    <td>
+                      <button class="btn btn-sm btn-outline-primary" (click)="viewClient(client)">
+                        Ver Detalles
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Services -->
+      <div *ngIf="adminPage === 'servicios'" class="fade-in">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h1>Servicios</h1>
+          <button class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>Nuevo Servicio
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Nombre del Servicio</th>
+                    <th>Categoría</th>
+                    <th>Duración</th>
+                    <th>Precio</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let service of dataService.services" class="service-row">
+                    <td>{{service.name}}</td>
+                    <td>{{service.category}}</td>
+                    <td>{{service.duration}} min</td>
+                    <td class="fw-semibold">${{service.price}}</td>
+                    <td>
+                      <button class="btn btn-sm btn-outline-primary">Editar</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Client Detail Modal -->
+  <div class="modal fade" 
+       [class.show]="showClientModal" 
+       [style.display]="showClientModal ? 'block' : 'none'" 
+       tabindex="-1" 
+       *ngIf="showClientModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Perfil de {{selectedClient?.name}}</h5>
+          <button type="button" class="btn-close" (click)="closeClientModal()"></button>
+        </div>
+        <div class="modal-body" *ngIf="selectedClient">
+          <div class="client-detail">
+            <strong>Email:</strong> {{selectedClient.email}}
+          </div>
+          <div class="client-detail">
+            <strong>Última Visita:</strong> {{selectedClient.lastVisit}}
+          </div>
+          <div class="client-detail">
+            <strong>Gasto Total:</strong> ${{selectedClient.totalSpent}}
+          </div>
+          <div class="alert alert-info">
+            <div class="d-flex align-items-center mb-2">
+              <i class="bi bi-info-circle me-2"></i>
+              <strong>Preferencias de Interacción (Modo Calma)</strong>
+            </div>
+            <span class="badge" 
+                  [class.bg-primary]="selectedClient.calmaMode" 
+                  [class.bg-secondary]="!selectedClient.calmaMode">
+              {{selectedClient.calmaMode ? 'Activado' : 'Desactivado'}}
+            </span>
+            <p *ngIf="selectedClient.preferences" class="mt-2 mb-0 fst-italic small">
+              "{{selectedClient.preferences}}"
+            </p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeClientModal()">Cerrar</button>
+          <button type="button" class="btn btn-primary">Editar Cliente</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="showClientModal" class="modal-backdrop fade show"></div>
+</div>

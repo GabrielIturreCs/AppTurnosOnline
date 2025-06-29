@@ -1,0 +1,333 @@
+  <!-- Client View -->
+  <div *ngIf="currentView === 'client'" class="client-booking-container">
+    <!-- Header -->
+    <div class="booking-header">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 text-center">
+            <h1 class="display-5 fw-bold mb-2">Reserva tu Cita</h1>
+            <p class="lead text-muted">Encuentra el mejor momento para tu cuidado personal</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Booking Content -->
+    <div class="container py-4">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          
+          <!-- Back Button (except first and success steps) -->
+          <div *ngIf="clientStep > 1 && clientStep < 6" class="mb-4">
+            <button class="btn btn-link text-muted p-0" (click)="previousStep()">
+              <i class="bi bi-chevron-left me-1"></i>Volver
+            </button>
+          </div>
+
+          <!-- Progress Steps -->
+          <div *ngIf="clientStep < 6" class="progress-steps mb-5">
+            <div class="step-progress-bar">
+              <div class="progress-line" [style.width.%]="(clientStep / 5) * 100"></div>
+            </div>
+            <div class="steps-container">
+              <div *ngFor="let step of steps; let i = index" 
+                   class="step-item" 
+                   [class.active]="clientStep >= i + 1" 
+                   [class.completed]="clientStep > i + 1">
+                <div class="step-circle">
+                  <i *ngIf="clientStep > i + 1" class="bi bi-check-lg"></i>
+                  <span *ngIf="clientStep <= i + 1">{{ i + 1 }}</span>
+                </div>
+                <span class="step-label">{{ step }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 1: Client Name Input -->
+          <div *ngIf="clientStep === 1" class="step-content fade-in">
+            <div class="card shadow-sm border-0">
+              <div class="card-body p-5 text-center">
+                <h2 class="card-title mb-3">Dinos tu Nombre</h2>
+                <p class="text-muted mb-4">Por favor, ingresa tu nombre y apellido para comenzar.</p>
+                
+                <div class="row justify-content-center">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="firstName" class="form-label">Nombre</label>
+                      <input type="text" class="form-control" id="firstName" 
+                             [(ngModel)]="clientInfo.firstName" name="firstName"
+                             placeholder="Tu nombre">
+                    </div>
+                    <div class="mb-4">
+                      <label for="lastName" class="form-label">Apellido</label>
+                      <input type="text" class="form-control" id="lastName" 
+                             [(ngModel)]="clientInfo.lastName" name="lastName"
+                             placeholder="Tu apellido">
+                    </div>
+                    <button class="btn btn-primary btn-lg" 
+                            [disabled]="!clientInfo.firstName.trim() || !clientInfo.lastName.trim()"
+                            (click)="nextStep()">
+                      Siguiente
+                      <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Service Selection -->
+          <div *ngIf="clientStep === 2" class="step-content fade-in">
+            <div class="card shadow-sm border-0">
+              <div class="card-body p-4">
+                <h2 class="card-title text-center mb-3">Elige un Servicio</h2>
+                <p class="text-center text-muted mb-4">Selecciona el servicio que deseas agendar.</p>
+                
+                <div class="row g-4">
+                  <div class="col-md-6" *ngFor="let service of dataService.getServices()">
+                    <div class="service-card h-100" 
+                         [class.selected]="selectedService?.id === service.id"
+                         (click)="selectService(service)">
+                      <div class="service-card-body">
+                        <div class="service-icon-wrapper">
+                          <i class="bi bi-{{ service.icon }} service-icon"></i>
+                        </div>
+                        <div class="service-details">
+                          <h5 class="service-name">{{ service.name }}</h5>
+                          <p class="service-duration text-muted mb-2">
+                            <i class="bi bi-clock me-1"></i>{{ service.duration }} min
+                          </p>
+                          <p class="service-price fw-bold text-primary mb-0">
+                            ${{ service.price }}
+                          </p>
+                        </div>
+                        <i class="bi bi-arrow-right ms-auto text-muted"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Professional Selection -->
+          <div *ngIf="clientStep === 3" class="step-content fade-in">
+            <div class="card shadow-sm border-0">
+              <div class="card-body p-4">
+                <h2 class="card-title text-center mb-3">Elige tu Profesional</h2>
+                <p class="text-center text-muted mb-4">
+                  Selecciona el profesional que realizará tu 
+                  <span class="fw-semibold text-primary">{{ selectedService?.name }}</span>.
+                </p>
+                
+                <div class="row g-4 justify-content-center">
+                  <div class="col-md-6 col-lg-4" *ngFor="let professional of getAvailableProfessionals()">
+                    <div class="professional-card" 
+                         [class.selected]="selectedProfessional?.id === professional.id"
+                         (click)="selectProfessional(professional)">
+                      <div class="professional-avatar">
+                        <i class="bi bi-person-circle"></i>
+                      </div>
+                      <div class="professional-info">
+                        <h6 class="professional-name">{{ professional.name }}</h6>
+                        <small class="text-muted">Especialista</small>
+                      </div>
+                      <i class="bi bi-arrow-right ms-auto text-muted"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-center mt-4">
+                  <button class="btn btn-primary btn-lg" 
+                          [disabled]="!selectedProfessional"
+                          (click)="nextStep()">
+                    Continuar
+                    <i class="bi bi-arrow-right ms-2"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4: Date & Time Selection -->
+          <div *ngIf="clientStep === 4" class="step-content fade-in">
+            <div class="card shadow-sm border-0">
+              <div class="card-body p-4">
+                <h2 class="card-title text-center mb-3">Selecciona Fecha y Hora</h2>
+                <p class="text-center text-muted mb-4">
+                  Elige un horario disponible con 
+                  <span class="fw-semibold text-primary">{{ selectedProfessional?.name }}</span> 
+                  para tu <span class="fw-semibold text-primary">{{ selectedService?.name }}</span>.
+                </p>
+                
+                <div class="row g-4">
+                  <!-- Calendar -->
+                  <div class="col-md-6">
+                    <div class="calendar-section">
+                      <h5 class="mb-3">Selecciona una fecha</h5>
+                      <div class="calendar-grid">
+                        <div *ngFor="let day of ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']" 
+                             class="calendar-header">
+                          {{ day }}
+                        </div>
+                        <div *ngFor="let date of getCurrentMonthDays()" 
+                             class="calendar-day"
+                             [class.selected]="isDateSelected(date)"
+                             [class.disabled]="isDateInPast(date)"
+                             (click)="!isDateInPast(date) && selectDate(date)">
+                          {{ date.getDate() }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Time Slots -->
+                  <div class="col-md-6">
+                    <h5 class="mb-3">
+                      Horarios para {{ selectedDate ? selectedDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' }) : 'el día seleccionado' }}
+                    </h5>
+                    <div *ngIf="selectedDate" class="time-grid">
+                      <button *ngFor="let time of getAvailableTimesForDate()" 
+                              class="time-slot"
+                              [class.selected]="selectedTime === time"
+                              (click)="selectTime(time)">
+                        {{ time }}
+                      </button>
+                    </div>
+                    <div *ngIf="!selectedDate" class="text-center text-muted py-4">
+                      <i class="bi bi-calendar3 fs-3 d-block mb-2"></i>
+                      <p class="mb-0">Selecciona una fecha para ver los horarios disponibles</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-center mt-4">
+                  <button class="btn btn-primary btn-lg" 
+                          [disabled]="!selectedDate || !selectedTime"
+                          (click)="nextStep()">
+                    Continuar
+                    <i class="bi bi-arrow-right ms-2"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 5: Confirmation and Payment -->
+          <div *ngIf="clientStep === 5" class="step-content fade-in">
+            <div class="card shadow-sm border-0 mb-4">
+              <div class="card-body p-4">
+                <h2 class="card-title text-center mb-4">Confirma y Paga tu Cita</h2>
+                <p class="text-center text-muted mb-4">Revisa los detalles, añade notas y realiza el pago para confirmar.</p>
+                
+                <!-- Booking Summary -->
+                <div class="booking-summary mb-4">
+                  <h5 class="mb-3">Resumen de la Cita</h5>
+                  <div class="summary-item">
+                    <div class="summary-label">
+                      <i class="bi bi-person me-2"></i>Cliente
+                    </div>
+                    <div class="summary-value">{{ clientInfo.firstName }} {{ clientInfo.lastName }}</div>
+                  </div>
+                  <div class="summary-item">
+                    <div class="summary-label">
+                      <i class="bi bi-person-badge me-2"></i>Profesional
+                    </div>
+                    <div class="summary-value">{{ selectedProfessional?.name }}</div>
+                  </div>
+                  <div class="summary-item">
+                    <div class="summary-label">
+                      <i class="bi bi-{{ selectedService?.icon }} me-2"></i>Servicio
+                    </div>
+                    <div class="summary-value">{{ selectedService?.name }}</div>
+                  </div>
+                  <div class="summary-item">
+                    <div class="summary-label">
+                      <i class="bi bi-calendar3 me-2"></i>Fecha
+                    </div>
+                    <div class="summary-value">{{ formatSelectedDate() }}</div>
+                  </div>
+                  <div class="summary-item">
+                    <div class="summary-label">
+                      <i class="bi bi-clock me-2"></i>Hora
+                    </div>
+                    <div class="summary-value">{{ selectedTime }}</div>
+                  </div>
+                  <div class="summary-item border-top pt-3">
+                    <div class="summary-label fw-bold">
+                      <i class="bi bi-currency-dollar me-2"></i>Costo Total
+                    </div>
+                    <div class="summary-value fw-bold fs-5">${{ selectedService?.price }}</div>
+                  </div>
+                  <div class="summary-item text-primary">
+                    <div class="summary-label fw-bold">
+                      <i class="bi bi-credit-card me-2"></i>Pago requerido (50%)
+                    </div>
+                    <div class="summary-value fw-bold">${{ selectedService ? selectedService.price / 2 : 0 }}</div>
+                  </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="mb-4">
+                  <label for="bookingNotes" class="form-label">Notas adicionales (opcional)</label>
+                  <textarea class="form-control" id="bookingNotes" rows="3"
+                            [(ngModel)]="clientInfo.notes" name="bookingNotes"
+                            placeholder="Ej: Me gustaría escuchar música clásica, tengo alergia a X producto, etc."></textarea>
+                  <small class="text-muted">Estas notas serán visibles para tu profesional.</small>
+                </div>
+
+                <!-- Payment Status -->
+                <div *ngIf="paymentInfo.message" 
+                     class="alert mb-4"
+                     [class.alert-success]="paymentInfo.isConfirmed"
+                     [class.alert-info]="paymentInfo.isProcessing">
+                  {{ paymentInfo.message }}
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="text-center">
+                  <button class="btn btn-primary me-3" 
+                          [disabled]="paymentInfo.isConfirmed || paymentInfo.isProcessing"
+                          (click)="processPayment()">
+                    <i class="bi bi-credit-card me-2"></i>
+                    {{ paymentInfo.isConfirmed ? 'Pagado' : 'Pagar $' + (selectedService ? selectedService.price / 2 : 0) }}
+                  </button>
+                  <button class="btn btn-success" 
+                          [disabled]="!paymentInfo.isConfirmed"
+                          (click)="nextStep()">
+                    <i class="bi bi-check-circle me-2"></i>Confirmar Turno
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 6: Success -->
+          <div *ngIf="clientStep === 6" class="step-content fade-in">
+            <div class="card shadow-sm border-0 text-center">
+              <div class="card-body p-5">
+                <div class="success-animation mb-4">
+                  <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                </div>
+                
+                <h2 class="text-success mb-3">¡Cita Confirmada!</h2>
+                <p class="text-muted mb-4">
+                  Hemos enviado los detalles de tu cita a tu correo electrónico. ¡Te esperamos!
+                </p>
+
+                <div class="mt-4">
+                  <button class="btn btn-primary me-3" (click)="addToCalendar()">
+                    <i class="bi bi-calendar-plus me-2"></i>Agregar al Calendario
+                  </button>
+                  <button class="btn btn-outline-primary" (click)="resetBooking()">
+                    <i class="bi bi-plus-lg me-2"></i>Agendar otra cita
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>

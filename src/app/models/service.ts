@@ -4,4 +4,5 @@ export interface Service {
   duration: number
   price: number
   category: string
+  icon: string
 }
