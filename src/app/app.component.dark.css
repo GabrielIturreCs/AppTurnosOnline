@@ -1,0 +1,103 @@
+/* Dark Theme Overrides */
+[data-bs-theme="dark"] .sidebar {
+  background-color: #374151;
+  border-color: #4b5563;
+}
+
+[data-bs-theme="dark"] .sidebar-header {
+  border-color: #4b5563;
+}
+
+[data-bs-theme="dark"] .nav-link {
+  color: #d1d5db;
+}
+
+[data-bs-theme="dark"] .nav-link:hover {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+}
+
+[data-bs-theme="dark"] .time-cell {
+  background-color: #374151;
+  color: #d1d5db;
+}
+
+[data-bs-theme="dark"] .time-slot {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #d1d5db;
+}
+
+[data-bs-theme="dark"] .time-slot:hover {
+  background-color: #4b5563;
+}
+
+[data-bs-theme="dark"] .calendar-day {
+  color: #d1d5db;
+}
+
+[data-bs-theme="dark"] .chart-placeholder {
+  background-color: #374151;
+}
+
+[data-bs-theme="dark"] .service-icon {
+  background-color: rgba(59, 130, 246, 0.2);
+}
+
+[data-bs-theme="dark"] .detail-value {
+  color: #d1d5db;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    z-index: 1000;
+    height: 100vh;
+    transform: translateX(0);
+  }
+
+  .sidebar.sidebar-collapsed {
+    transform: translateX(-100%);
+    width: 250px;
+  }
+
+  .admin-main {
+    margin-left: 0;
+  }
+
+  .calendar-grid {
+    font-size: 0.75rem;
+  }
+
+  .time-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .step-connector {
+    width: 32px;
+    margin: 0 8px;
+  }
+}
+
+@media (max-width: 576px) {
+  .admin-main {
+    padding: 1rem;
+  }
+
+  .time-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-detail {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .booking-total {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}

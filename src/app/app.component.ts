@@ -12,7 +12,7 @@ import type { Client } from "./models/client"
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.css"],
+  styleUrls: ["./app.component.css", "./app.component.dark.css"],
 })
 export class AppComponent implements OnInit {
   Math = Math

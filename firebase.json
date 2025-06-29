@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/angular-keep",
+    "public": "dist/serenacita-angular",
     "ignore": [
       "firebase.json",
       "**/.*",
